@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import Auth from '../utils/auth';
-import {Jumbotron, Container, Col, Form, Button, Card, CardColumns} from 'react-bootstrap';
+import {Accordion, Container, Col, Form, Button, Card, CardGroup} from 'react-bootstrap';
 import {searchGoogleBooks} from '../utils/API';
 import {saveBookIds, getSavedBookIds} from '../utils/localStorage';
 import {SAVE_BOOK} from '../utils/mutations';
-import {useMutations} from '@apollo/react-hooks';
+import {useMutation} from '@apollo/react-hooks';
 
 
 
 
 const SearchBooks = () => {
-  const [saveBook, {errorMessage}] = useMutation(SAVE_BOOK);
+  const [saveBook, {error}] = useMutation(SAVE_BOOK);
   // create state for holding returned google api data
   const [searchedBooks, setSearchedBooks] = useState([]);
   // create state for holding our search field data
@@ -68,11 +68,12 @@ const SearchBooks = () => {
     if (!token) {
       return false;
     }
-
+    /*exported modal*/
     try {
-      const {data} = await saveBook({ 
+      // eslint-disable-next-line no-unused-vars
+      const { data } = await saveBook({ 
         variables: {input: bookToSave}
-      });
+     });
 
       if (error) {
         throw new Error('something went wrong!');
@@ -87,68 +88,66 @@ const SearchBooks = () => {
 
   return (
     <>
-      <div fluid className='text-light bg-dark pt-5'>
-        <Container>
-          <h1>Search for Books!</h1>
-          <Form onSubmit={handleFormSubmit}>
-            <Form.Row>
-              <Col xs={12} md={8}>
-                <Form.Control
-                  name='searchInput'
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  type='text'
-                  size='lg'
-                  placeholder='Search for a book'
-                />
-              </Col>
-              <Col xs={12} md={4}>
-                <Button type='submit' variant='success' size='lg'>
-                  Submit Search
-                </Button>
-              </Col>
-            </Form.Row>
-          </Form>
-        </Container>
-      </div>
+      <Accordion fluid className='text-light bg-dark'>
+                <Container>
+                    <h1>Search for Books!</h1>
+                    <Form onSubmit={handleFormSubmit}>
+                        <Form.Row>
+                            <Col xs={12} md={8}>
+                                <Form.Control
+                                    name='searchInput'
+                                    value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
+                                    type='text'
+                                    size='lg'
+                                    placeholder='Search for a book'
+                                />
+                            </Col>
+                            <Col xs={12} md={4}>
+                                <Button type='submit' variant='success' size='lg'>
+                                    Submit Search
+                                </Button>
+                            </Col>
+                        </Form.Row>
+                    </Form>
+                </Container>
+            </Accordion>
 
-      <Container>
-        <h2>
-          {searchedBooks.length
-            ? `Viewing ${searchedBooks.length} results:`
-            : 'Search for a book to begin'}
-        </h2>
-        <Row>
-          {searchedBooks.map((book) => {
-            return (
-              <Col md="4">
-                <Card key={book.bookId} border='dark'>
-                  {book.image ? (
-                    <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' />
-                  ) : null}
-                  <Card.Body>
-                    <Card.Title>{book.title}</Card.Title>
-                    <p className='small'>Authors: {book.authors}</p>
-                    <Card.Text>{book.description}</Card.Text>
-                    {Auth.loggedIn() && (
-                      <Button
-                        disabled={savedBookIds?.some((savedBookId) => savedBookId === book.bookId)}
-                        className='btn-block btn-info'
-                        onClick={() => handleSaveBook(book.bookId)}>
-                        {savedBookIds?.some((savedBookId) => savedBookId === book.bookId)
-                          ? 'This book has already been saved!'
-                          : 'Save this Book!'}
-                      </Button>
-                    )}
-                  </Card.Body>
-                </Card>
-              </Col>
-            );
-          })}
-        </Row>
-      </Container>
-    </>
-  );
+            <Container>
+                <h2>
+                    {searchedBooks.length
+                        ? `Viewing ${searchedBooks.length} results:`
+                        : 'Search for a book to begin'}
+                </h2>
+                <CardGroup>
+                    {searchedBooks.map((book) => {
+                        return (
+                            <Card key={book.bookId} border='dark'>
+                                {book.image ? (
+                                    <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top'/>
+                                ) : null}
+                                <Card.Body>
+                                    <Card.Title>{book.title}</Card.Title>
+                                    <p className='small'>Authors: {book.authors}</p>
+                                    <Card.Text>{book.description}</Card.Text>
+                                    {Auth.loggedIn() && (
+                                        <Button
+                                            disabled={savedBookIds?.some((savedBookId) => savedBookId === book.bookId)}
+                                            className='btn-block btn-info'
+                                            onClick={() => handleSaveBook(book.bookId)}>
+                                            {savedBookIds?.some((savedBookId) => savedBookId === book.bookId)
+                                                ? 'Book already saved!'
+                                                : 'Save this Book!'}
+                                        </Button>
+                                    )}
+                                </Card.Body>
+                            </Card>
+                        );
+                    })}
+                </CardGroup>
+            </Container>
+        </>
+    );
 };
 
 export default SearchBooks;
