@@ -19,15 +19,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "apollo": "^2.34.0",
-    "apollo-server-express": "^3.11.1",
-    "client": "^0.0.1",
-    "express": "^4.17.2",
-    "graphql": "^15.8.0",
-    "node.js": "^0.0.1-security",
-    "react": "^18.2.0"
-  },
+  
   "devDependencies": {
     "concurrently": "^5.3.0"
   }
