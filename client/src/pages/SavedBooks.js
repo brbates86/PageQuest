@@ -2,7 +2,8 @@ import React from 'react';
 import Auth from '../utils/auth';
 import { Accordion, Container, CardGroup, Card, Button } from 'react-bootstrap';
 import { removeBookId } from '../utils/localStorage';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+//import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/client';
 import { REMOVE_BOOK } from '../utils/mutations';
 import { GET_USER } from '../utils/queries';
 
